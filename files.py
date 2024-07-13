@@ -137,7 +137,10 @@ def track_dir(path):
     absolute_path = os.path.abspath(path)
     directory = os.path.dirname(absolute_path)
     if not os.path.exists(directory):
-        os.makedirs(directory)
+        try:
+            os.makedirs(directory)
+        except Exception:
+            pass
 
 
 def read_json(path_file):
