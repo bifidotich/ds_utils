@@ -349,3 +349,40 @@ def concat_csv_files(directory_path, output_filename='combined_output.csv'):
     combined_df = pd.concat(dfs, ignore_index=True)
     combined_df = combined_df.fillna(0.0)
     combined_df.to_csv(output_filename, index=False)
+
+
+def extract_gz_files(path):
+
+    if isinstance(path, list):
+        files = path
+    elif isinstance(path, str):
+        if os.path.isfile(path):
+            files = [path]
+        elif os.path.isdir(path):
+            files = find_files(path_directory=path, partial_name='', extension='gz')
+        else:
+            raise TypeError("'path' not file")
+    else:
+        raise TypeError("'path' not type")
+
+    for file in files:
+        if file.endswith('.gz'):
+
+            basename = os.path.splitext(os.path.basename(file))[0]
+            if basename[-4:] == '.csv':
+                basename = basename[:-4]
+
+            if os.path.isdir(path):
+                new_dir = f'{path}_extracted'
+            else:
+                new_dir = f'{os.path.splitext(os.path.basename(path))[0]}_extracted'
+
+            new_file = f'{new_dir}/{basename}.csv'
+            print(basename)
+            track_dir(new_file)
+
+            with open(file, 'rb') as f_in:
+                file_content = f_in.read()
+
+            with open(new_file, 'wb') as f_out:
+                f_out.write(file_content)
