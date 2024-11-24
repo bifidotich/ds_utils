@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import time
+import gzip
 import pickle
 import shutil
 import codecs
@@ -378,11 +379,8 @@ def extract_gz_files(path):
                 new_dir = f'{os.path.splitext(os.path.basename(path))[0]}_extracted'
 
             new_file = f'{new_dir}/{basename}.csv'
-            print(basename)
             track_dir(new_file)
 
-            with open(file, 'rb') as f_in:
-                file_content = f_in.read()
-
-            with open(new_file, 'wb') as f_out:
-                f_out.write(file_content)
+            with gzip.open(file, 'rb') as f_in:
+                with open(new_file, 'wb') as f_out:
+                    shutil.copyfileobj(f_in, f_out)
